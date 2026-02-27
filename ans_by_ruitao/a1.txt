@@ -1,0 +1,7 @@
+Administration Assistant
+Human Resources Representative
+Programmer
+Marketing Representative
+Purchasing Clerk
+Shipping Clerk
+Stock Clerk
