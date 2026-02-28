@@ -1,0 +1,19 @@
+President|16000.0
+Administration Vice President|13000.0
+Sales Manager|6250.0
+Sales Representative|4450.0
+Programmer|4240.0
+Accounting Manager|4000.0
+Finance Manager|4000.0
+Purchasing Manager|4000.0
+Marketing Representative|3000.0
+Purchasing Clerk|2720.0
+Human Resources Representative|2500.0
+Stock Clerk|2300.0
+Marketing Manager|2000.0
+Administration Assistant|1600.0
+Shipping Clerk|1550.0
+Accountant|1080.0
+Stock Manager|850.0
+Public Accountant|700.0
+Public Relations Representative|500.0

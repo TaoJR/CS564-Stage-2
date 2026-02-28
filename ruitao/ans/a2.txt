@@ -1,0 +1,11 @@
+Shipping|7
+Finance|6
+Purchasing|6
+Sales|6
+IT|5
+Executive|3
+Accounting|2
+Marketing|2
+Administration|1
+Human Resources|1
+Public Relations|1

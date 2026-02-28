@@ -1,0 +1,8 @@
+Marketing|12000.0
+Human Resources|9000.0
+IT|10000.0
+Public Relations|10500.0
+Sales|14666.6666666667
+Executive|33333.3333333333
+Finance|10166.6666666667
+Accounting|12500.0
