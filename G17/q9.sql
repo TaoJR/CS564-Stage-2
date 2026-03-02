@@ -1,4 +1,4 @@
-SELECT
+SELECT DISTINCT
   d.department_name
 FROM employees e
 JOIN departments d
