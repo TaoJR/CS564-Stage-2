@@ -1,0 +1,14 @@
+G17 Stage 2
+
+Group member:
+
+Edison Chiu enchiu@wisc.edu
+Jeff Zhang xzhang2733@wisc.edu
+Ruitao Wu rwu245@wisc.edu
+
+Each member contributes to this project stage equally. Every member completes all 12 questions, and we compare the output together. 
+
+q1-q4: Edison Chiu
+q5-q8: Jeff Zhang
+q9-q12: Ruitao Wu
+
