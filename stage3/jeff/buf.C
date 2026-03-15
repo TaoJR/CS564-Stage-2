@@ -266,18 +266,23 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
 {
     int frameNo;
     Status status = hashTable->lookup(file, PageNo, frameNo);
-	
+
+	// Page not found in hash table
 	if (status == HASHNOTFOUND)
 		return HASHNOTFOUND;
 
+	// Unexpected hash table error
 	if (status != OK)
-		return HASHTBLERROR;
+		return HASHNOTFOUND;
 
+	// Page is already unpinned
     if (bufTable[frameNo].pinCnt == 0)
         return PAGENOTPINNED;
 
+	// Decrease pin count by 1
     bufTable[frameNo].pinCnt--;
 
+	// Mark the page dirty if modified
     if (dirty)
         bufTable[frameNo].dirty = true;
 
