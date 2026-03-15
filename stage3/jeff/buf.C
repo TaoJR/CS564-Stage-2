@@ -1,3 +1,19 @@
+//////////////////////////////////////////////////////////////////////////
+// buf.C
+//
+// Group 17
+// Edison Chiu (ID: 9086051183 )
+// Jeff Zhang (ID: 9086143048)
+// Ruitao Wu (ID: 9087477130)
+//
+// Purpose:
+// Implements the buffer manager for the project.
+// This file contains the buffer manager constructor and destructor,
+// buffer frame allocation with the clock replacement algorithm,
+// page reading, page unpinning, page allocation, page disposal,
+// file flushing, and buffer state printing.
+//////////////////////////////////////////////////////////////////////////
+
 #include <memory.h>
 #include <unistd.h>
 #include <errno.h>
@@ -19,6 +35,21 @@
 // Constructor of the class BufMgr
 //----------------------------------------
 
+/*
+ * BufMgr
+ *
+ * Constructor for the buffer manager.
+ * Initializes the buffer pool, buffer descriptors, hash table, and clock hand.
+ *
+ * Input:
+ * bufs - number of frames in the buffer pool.
+ *
+ * Output:
+ * None
+ *
+ * Returns:
+ * None
+ */
 BufMgr::BufMgr(const int bufs)
 {
     numBufs = bufs;
@@ -40,7 +71,22 @@ BufMgr::BufMgr(const int bufs)
     clockHand = bufs - 1;
 }
 
-
+/*
+ * ~BufMgr
+ *
+ * Destructor for the buffer manager.
+ * Flushes any remaining dirty pages in the buffer pool and
+ * deallocates memory used by the buffer manager.
+ *
+ * Input:
+ * None.
+ *
+ * Output:
+ * None.
+ *
+ * Returns:
+ * None.
+ */
 BufMgr::~BufMgr() {
 
     // flush out all unwritten pages
@@ -62,7 +108,25 @@ BufMgr::~BufMgr() {
     delete [] bufPool;
 }
 
-
+/*
+ * allocBuf
+ *
+ * Allocates a buffer frame using the clock replacement algorithm.
+ * If necessary, writes a dirty victim page back to disk and removes
+ * the old page entry from the hash table before reusing the frame.
+ *
+ * Input:
+ * frame - reference parameter used to return the selected frame number.
+ *
+ * Output:
+ * frame - set to the allocated frame number if successful.
+ *
+ * Returns:
+ * OK - a buffer frame is successfully allocated.
+ * BUFFEREXCEEDED - all buffer frames are pinned.
+ * UNIXERR - a dirty page cannot be written back to disk.
+ * HASHTBLERROR - remove a valid page from the hash table fails.
+ */
 const Status BufMgr::allocBuf(int & frame) 
 {
     for (unsigned int i = 0; i < 2 * (unsigned int)numBufs; i++) 
@@ -112,7 +176,27 @@ const Status BufMgr::allocBuf(int & frame)
     return BUFFEREXCEEDED;
 }
 
-	
+/*
+ * readPage
+ *
+ * Looks up the requested page in the buffer pool.
+ * If the page is already present, updates its refbit and pin count.
+ * Otherwise, allocates a buffer frame, reads the page from disk,
+ * inserts the page into the hash table, and sets the buffer descriptor.
+ *
+ * Input:
+ * file - pointer to the file containing the requested page.
+ * PageNo - page number to read.
+ *
+ * Output:
+ * page - set to point to the requested page in the buffer pool.
+ *
+ * Returns:
+ * OK - the page is successfully found or loaded.
+ * UNIXERR - reading the page from disk fails (Unix error).
+ * BUFFEREXCEEDED - no buffer frame can be allocated.
+ * HASHTBLERROR - a hash table error occurred.
+ */	
 const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
 {
     Status status;
@@ -157,7 +241,26 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
     return HASHTBLERROR;
 }
 
-
+/*
+ * unPinPage
+ *
+ * Unpins the specified page in the buffer pool by decrementing its
+ * pin count. If the dirty flag is true, the page is marked dirty.
+ *
+ * Input:
+ * file - pointer to the file containing the page.
+ * PageNo - page number to unpin.
+ * dirty - true if the page has been modified, false otherwise.
+ *
+ * Output:
+ * None.
+ *
+ * Returns:
+ * OK - the page is successfully unpinned.
+ * HASHNOTFOUND - the page is not found in the buffer pool hash table.
+ * PAGENOTPINNED - the page pin count is already 0.
+ * HASHTBLERROR - a hash table error occurs.
+ */
 const Status BufMgr::unPinPage(File* file, const int PageNo, 
 			       const bool dirty) 
 {
@@ -181,6 +284,26 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
     return OK;
 }
 
+/*
+ * allocPage
+ *
+ * Allocates a new empty page in the given file and assigns a buffer
+ * frame to hold it. Initializes the page in the buffer pool, inserts
+ * it into the hash table, and sets the buffer descriptor.
+ *
+ * Input:
+ * file - pointer to the file in which the new page is allocated.
+ *
+ * Output:
+ * pageNo - set to the newly allocated page number.
+ * page   - set to point to the new page in the buffer pool.
+ *
+ * Returns:
+ * OK - the page and buffer frame are successfully allocated.
+ * UNIXERR - allocating the page in the file fails (Unix error).
+ * BUFFEREXCEEDED - no buffer frame can be allocated.
+ * HASHTBLERROR - hash table error occurred.
+ */
 const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page) 
 {
     Status status;
@@ -221,6 +344,22 @@ const Status BufMgr::allocPage(File* file, int& pageNo, Page*& page)
     return OK;
 }
 
+/*
+ * disposePage
+ *
+ * Removes the specified page from the buffer pool if it is present
+ * and deallocates the page from the file.
+ *
+ * Input:
+ * file - pointer to the file containing the page.
+ * pageNo - page number to dispose.
+ *
+ * Output:
+ * None.
+ *
+ * Returns:
+ * The status returned by the file layer when disposing the page.
+ */
 const Status BufMgr::disposePage(File* file, const int pageNo) 
 {
     // see if it is in the buffer pool
@@ -238,6 +377,25 @@ const Status BufMgr::disposePage(File* file, const int pageNo)
     return file->disposePage(pageNo);
 }
 
+
+/*
+ * flushFile
+ *
+ * Flushes all pages of the specified file from the buffer pool.
+ * Dirty pages are written back to disk, their hash table entries
+ * are removed, and their buffer descriptors are cleared.
+ *
+ * Input:
+ * file - pointer to the file whose pages should be flushed.
+ *
+ * Output:
+ * None.
+ *
+ * Returns:
+ * OK - all pages are successfully flushed.
+ * PAGEPINNED - any page of the file is still pinned.
+ * BADBUFFER - an invalid buffer state is detected.
+ */
 const Status BufMgr::flushFile(const File* file) 
 {
   Status status;
@@ -275,7 +433,21 @@ const Status BufMgr::flushFile(const File* file)
   return OK;
 }
 
-
+/*
+ * printSelf
+ *
+ * Prints the current contents and status of the buffer pool.
+ * This function is intended for debugging and inspection.
+ *
+ * Input:
+ * None.
+ *
+ * Output:
+ * Writes buffer state information to standard output.
+ *
+ * Returns:
+ * None.
+ */
 void BufMgr::printSelf(void) 
 {
     BufDesc* tmpbuf;
