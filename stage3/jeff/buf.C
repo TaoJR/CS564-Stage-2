@@ -168,7 +168,7 @@ const Status BufMgr::allocBuf(int & frame)
         if (status != OK)
             return HASHTBLERROR;
 
-		// Remove the old page entry from the hash table
+		// Clear the descriptor before reuse
         desc->Clear();
         frame = clockHand;
         return OK;
@@ -276,7 +276,7 @@ const Status BufMgr::unPinPage(File* file, const int PageNo,
 
 	// Unexpected hash table error
 	if (status != OK)
-		return HASHNOTFOUND;
+		return HASHTBLERROR;
 
 	// Page is already unpinned
     if (bufTable[frameNo].pinCnt == 0)
