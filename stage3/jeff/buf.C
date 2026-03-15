@@ -163,10 +163,12 @@ const Status BufMgr::allocBuf(int & frame)
 			bufStats.diskwrites++;
         }
 
+		// Remove the old page entry from the hash table
         Status status = hashTable->remove(desc->file, desc->pageNo);
         if (status != OK)
             return HASHTBLERROR;
 
+		// Remove the old page entry from the hash table
         desc->Clear();
         frame = clockHand;
         return OK;
@@ -233,6 +235,7 @@ const Status BufMgr::readPage(File* file, const int PageNo, Page*& page)
         if (status != OK)
             return HASHTBLERROR;
 
+		// Set  buffer descriptor for the newly loaded page
         bufTable[frameNo].Set(file, PageNo);
         page = &bufPool[frameNo];
         return OK;
