@@ -1,0 +1,13 @@
+G17 Stage 3
+
+Group member:
+
+Edison Chiu enchiu@wisc.edu
+Jeff Zhang xzhang2733@wisc.edu
+Ruitao Wu rwu245@wisc.edu
+
+Each member contributes to this project stage equally. 
+Edison Chiu: allocBuf, help to check and modify the documentation of the code file
+Ruitao Wu: readPage, unPinPage
+Jeff Zhang: allocPage, organize the documentation 
+
