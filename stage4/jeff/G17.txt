@@ -1,0 +1,12 @@
+G17 Stage 4
+
+Group member:
+
+Edison Chiu enchiu@wisc.edu
+Jeff Zhang xzhang2733@wisc.edu
+Ruitao Wu rwu245@wisc.edu
+
+Each member contributes to this project stage equally. 
+Edison Chiu: createHeapFile, HeapFile
+Ruitao Wu: getRecord, scanNext
+Jeff Zhang: insertRecord, organize the documentation, and revise all functions to ensure documentation spec and error checking are fulfilled 
