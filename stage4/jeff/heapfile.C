@@ -17,6 +17,22 @@
 #include "heapfile.h"
 #include "error.h"
 
+/*
+ * createHeapFile
+ *
+ * Creates a new heap file with one header page and one data page.
+ *
+ * Input:
+ * fileName - name of the heap file to create.
+ *
+ * Output:
+ * None.
+ *
+ * Returns:
+ * OK - heap file is created successfully.
+ * FILEEXISTS - file already exists.
+ * Other error code - returned from lower-level file/buffer operations.
+ */
 // routine to create a heapfile
 const Status createHeapFile(const string fileName)
 {
@@ -133,6 +149,21 @@ const Status destroyHeapFile(const string fileName)
     return (db.destroyFile(fileName));
 }
 
+/*
+ * HeapFile
+ *
+ * Opens a heap file and pins its header page and first data page.
+ *
+ * Input:
+ * fileName - name of the heap file to open.
+ * returnStatus - reference parameter used to return status.
+ *
+ * Output:
+ * returnStatus - set to the result of opening and initializing the heap file.
+ *
+ * Returns:
+ * None.
+ */
 // constructor opens the underlying file
 HeapFile::HeapFile(const string &fileName, Status &returnStatus)
 {
@@ -275,11 +306,25 @@ const int HeapFile::getRecCnt() const
     return headerPage->recCnt;
 }
 
+/*
+ * getRecord
+ *
+ * Retrieves a record from the heap file given its RID.
+ *
+ * Input:
+ * rid - RID of the record to retrieve.
+ *
+ * Output:
+ * rec - set to the record found at the given RID.
+ *
+ * Returns:
+ * OK - record is retrieved successfully.
+ * Other error code - returned from page or buffer operations.
+ */
 // retrieve an arbitrary record from a file.
 // if record is not on the currently pinned page, the current page
 // is unpinned and the required page is read into the buffer pool
 // and pinned.  returns a pointer to the record via the rec parameter
-
 const Status HeapFile::getRecord(const RID &rid, Record &rec)
 {
     Status status;
@@ -411,6 +456,22 @@ const Status HeapFileScan::resetScan()
     return OK;
 }
 
+/*
+ * scanNext
+ *
+ * Scans forward and returns the next record that satisfies the filter.
+ *
+ * Input:
+ * outRid - reference parameter used to return the RID found by the scan.
+ *
+ * Output:
+ * outRid - set to the RID of the next matching record.
+ *
+ * Returns:
+ * OK - a matching record is found.
+ * FILEEOF - no more matching records exist.
+ * Other error code - returned from page or buffer operations.
+ */
 const Status HeapFileScan::scanNext(RID &outRid)
 {
     Status status = OK;
@@ -618,6 +679,22 @@ InsertFileScan::~InsertFileScan()
     }
 }
 
+/*
+ * insertRecord
+ *
+ * Inserts a record into the heap file and returns its RID.
+ *
+ * Input:
+ * rec - record to insert.
+ *
+ * Output:
+ * outRid - set to the RID of the inserted record.
+ *
+ * Returns:
+ * OK - record is inserted successfully.
+ * INVALIDRECLEN - record is too large to fit on a page.
+ * Other error code - returned from page or buffer operations.
+ */
 // Insert a record into the file
 const Status InsertFileScan::insertRecord(const Record &rec, RID &outRid)
 {
