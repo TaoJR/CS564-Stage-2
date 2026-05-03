@@ -1,0 +1,13 @@
+G17 Stage 6
+
+Group member:
+
+Edison Chiu enchiu@wisc.edu
+Jeff Zhang xzhang2733@wisc.edu
+Ruitao Wu rwu245@wisc.edu
+
+Each member contributes to this project stage equally. 
+Edison Chiu: select.C
+Ruitao Wu: insert.C
+Jeff Zhang: delete.C
+All members also double-check the logic of other files and run the tests.
